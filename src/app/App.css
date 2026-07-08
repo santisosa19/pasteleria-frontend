@@ -1719,43 +1719,50 @@ th {
   gap: 0.85rem;
   min-width: min(380px, calc(100vw - 2rem));
   border-width: 1px 1px 1px 6px;
-  padding: 1rem;
-  box-shadow: 0 24px 70px rgba(38, 29, 26, 0.22);
+  padding: 0.95rem 1rem;
+  box-shadow: 0 20px 54px rgba(38, 29, 26, 0.18);
 }
 
 .toast::before {
   display: none;
 }
 
-.toast-icon {
+.toast > .toast-icon {
   display: inline-grid;
-  width: 2rem;
-  height: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
   place-items: center;
-  flex: 0 0 auto;
+  flex: 0 0 2.35rem;
   border-radius: 999px;
 }
 
-.toast-icon::before {
-  width: 0.72rem;
-  height: 0.72rem;
+.toast > .toast-icon::before {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
   border-radius: 999px;
+  color: #fffaf4;
   content: '';
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
 }
 
-.toast-content {
+.toast > .toast-content {
   display: grid;
   gap: 0.15rem;
   flex: 1;
 }
 
-.toast-content strong {
+.toast > .toast-content strong {
   color: #352a28;
   font-size: 0.92rem;
   font-weight: 950;
 }
 
-.toast-content span {
+.toast > .toast-content span {
+  flex: initial;
   color: #4f403c;
   font-size: 0.9rem;
   line-height: 1.35;
@@ -1763,21 +1770,22 @@ th {
 
 .toast-success {
   border-color: #8fc99b;
-  background: #eef8ef;
+  background: linear-gradient(135deg, #f4fbf4, #eaf7ed);
 }
 
 .toast-success .toast-icon {
-  background: #d8f0dc;
+  background: #dff2e2;
 }
 
 .toast-success .toast-icon::before {
+  content: '✓';
   background: #4f9b63;
-  box-shadow: 0 0 0 0.32rem rgba(79, 155, 99, 0.18);
+  box-shadow: 0 0 0 0.24rem rgba(79, 155, 99, 0.14);
 }
 
 .toast-warning {
   border-color: #e8c66d;
-  background: #fff6d8;
+  background: linear-gradient(135deg, #fffaf0, #fff3cf);
 }
 
 .toast-warning .toast-icon {
@@ -1785,13 +1793,14 @@ th {
 }
 
 .toast-warning .toast-icon::before {
+  content: '!';
   background: #b9821d;
-  box-shadow: 0 0 0 0.32rem rgba(185, 130, 29, 0.18);
+  box-shadow: 0 0 0 0.24rem rgba(185, 130, 29, 0.14);
 }
 
 .toast-error {
   border-color: #e596a4;
-  background: #fff0f2;
+  background: linear-gradient(135deg, #fff6f7, #ffecef);
 }
 
 .toast-error .toast-icon {
@@ -1799,8 +1808,9 @@ th {
 }
 
 .toast-error .toast-icon::before {
+  content: '×';
   background: #c24f63;
-  box-shadow: 0 0 0 0.32rem rgba(194, 79, 99, 0.18);
+  box-shadow: 0 0 0 0.24rem rgba(194, 79, 99, 0.14);
 }
 
 .mobile-menu-button {
