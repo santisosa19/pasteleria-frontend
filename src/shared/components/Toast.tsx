@@ -1,6 +1,6 @@
 export type ToastState = {
   message: string
-  tone: 'success' | 'warning' | 'error'
+  tone: 'success' | 'warning' | 'error' | 'info'
 }
 
 type ToastProps = {
@@ -15,6 +15,7 @@ export function Toast({ onClose, toast }: ToastProps) {
 
   const labels = {
     error: 'Error',
+    info: 'Informacion',
     success: 'Correcto',
     warning: 'Atencion',
   }

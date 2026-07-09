@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { createProduct, deleteProduct, listProducts, updateProduct, type Product } from '../../features/products/api/productsApi'
 import { listRecipes, type RecipeSummary } from '../../features/recipes/api/recipesApi'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
@@ -21,9 +22,11 @@ export function ProductsPage() {
   const [recipes, setRecipes] = useState<RecipeSummary[]>([])
   const [form, setForm] = useState(initialForm)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState<ToastState | null>(null)
   const [search, setSearch] = useState('')
@@ -110,14 +113,19 @@ export function ProductsPage() {
     }
   }
 
-  async function handleDelete(product: Product) {
-    if (!window.confirm(`Desactivar el producto ${product.name}?`)) return
+  async function handleDelete() {
+    if (!productToDelete) return
+    setIsDeleting(true)
+
     try {
-      await deleteProduct(product.id)
+      await deleteProduct(productToDelete.id)
       await refreshProducts()
       setToast({ message: 'Producto desactivado correctamente.', tone: 'success' })
+      setProductToDelete(null)
     } catch (caughtError) {
       setToast({ message: getErrorMessage(caughtError), tone: 'error' })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -135,7 +143,7 @@ export function ProductsPage() {
         <button className="ghost-button" type="button" onClick={() => { setSearch(''); setStatusFilter('all'); setPublishedFilter('all'); setRecipeFilter('all'); setSort('name-asc') }}>Limpiar</button>
       </div>
 
-      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredProducts.length} de {products.length} productos</span></div>{isLoading ? <p>Cargando productos...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>SKU</th><th>Receta</th><th>Precio</th><th>Publicado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredProducts.map((product) => <tr key={product.id}><td>{product.name}</td><td>{product.sku ?? '-'}</td><td>{product.recipe?.name ?? '-'}</td><td>${formatNumber(product.salePrice)}</td><td>{product.isPublished ? 'Si' : 'No'}</td><td>{product.isActive ? 'Activo' : 'Inactivo'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(product)}>Editar</button><button type="button" onClick={() => void handleDelete(product)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
+      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredProducts.length} de {products.length} productos</span></div>{isLoading ? <p>Cargando productos...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>SKU</th><th>Receta</th><th>Precio</th><th>Publicado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredProducts.map((product) => <tr key={product.id}><td>{product.name}</td><td>{product.sku ?? '-'}</td><td>{product.recipe?.name ?? '-'}</td><td>${formatNumber(product.salePrice)}</td><td>{product.isPublished ? 'Si' : 'No'}</td><td>{product.isActive ? 'Activo' : 'Inactivo'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(product)}>Editar</button><button type="button" onClick={() => setProductToDelete(product)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
 
       <Modal isOpen={isModalOpen} title={editingProduct ? 'Editar producto' : 'Nuevo producto'} description="Carga precio, publicacion y receta asociada si corresponde." onClose={closeModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
@@ -153,6 +161,17 @@ export function ProductsPage() {
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        confirmLabel="Desactivar"
+        description={`El producto ${productToDelete?.name ?? ''} quedara inactivo y dejara de estar disponible para nuevas operaciones.`}
+        isConfirming={isDeleting}
+        isOpen={Boolean(productToDelete)}
+        onCancel={() => setProductToDelete(null)}
+        onConfirm={() => void handleDelete()}
+        title="Desactivar producto"
+        tone="warning"
+      />
     </section>
   )
 }

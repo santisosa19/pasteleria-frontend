@@ -7,6 +7,7 @@ import {
   type MeasurementKind,
   type MeasurementUnit,
 } from '../../features/measurement-units/api/measurementUnitsApi'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
@@ -23,9 +24,11 @@ export function MeasurementUnitsPage() {
   const [units, setUnits] = useState<MeasurementUnit[]>([])
   const [form, setForm] = useState(initialForm)
   const [editingUnit, setEditingUnit] = useState<MeasurementUnit | null>(null)
+  const [unitToDelete, setUnitToDelete] = useState<MeasurementUnit | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState<ToastState | null>(null)
   const [search, setSearch] = useState('')
@@ -116,15 +119,19 @@ export function MeasurementUnitsPage() {
     }
   }
 
-  async function handleDelete(unit: MeasurementUnit) {
-    if (!window.confirm(`Eliminar la unidad ${unit.code}?`)) return
+  async function handleDelete() {
+    if (!unitToDelete) return
+    setIsDeleting(true)
 
     try {
-      await deleteMeasurementUnit(unit.id)
+      await deleteMeasurementUnit(unitToDelete.id)
       await refreshUnits()
       setToast({ message: 'Unidad eliminada correctamente.', tone: 'success' })
+      setUnitToDelete(null)
     } catch (caughtError) {
       setToast({ message: getErrorMessage(caughtError), tone: 'error' })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -147,7 +154,7 @@ export function MeasurementUnitsPage() {
 
       <div className="page-card table-card">
         <div className="table-header"><h2>Listado</h2><span>{filteredUnits.length} de {units.length} unidades</span></div>
-        {isLoading ? <p>Cargando unidades...</p> : <div className="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Conversion</th><th>Base</th><th>Acciones</th></tr></thead><tbody>{filteredUnits.map((unit) => <tr key={unit.id}><td>{unit.code}</td><td>{unit.name}</td><td>{kindLabels[unit.kind]}</td><td>{formatNumber(unit.conversionRateToBase, 6)}</td><td>{unit.isBase ? 'Si' : 'No'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(unit)}>Editar</button><button type="button" onClick={() => void handleDelete(unit)}>Eliminar</button></td></tr>)}</tbody></table></div>}
+        {isLoading ? <p>Cargando unidades...</p> : <div className="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Tipo</th><th>Conversion</th><th>Base</th><th>Acciones</th></tr></thead><tbody>{filteredUnits.map((unit) => <tr key={unit.id}><td>{unit.code}</td><td>{unit.name}</td><td>{kindLabels[unit.kind]}</td><td>{formatNumber(unit.conversionRateToBase, 6)}</td><td>{unit.isBase ? 'Si' : 'No'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(unit)}>Editar</button><button type="button" onClick={() => setUnitToDelete(unit)}>Eliminar</button></td></tr>)}</tbody></table></div>}
       </div>
 
       <Modal isOpen={isModalOpen} title={editingUnit ? 'Editar unidad' : 'Nueva unidad'} description="Definí el tipo y la conversion respecto de la unidad base." onClose={closeModal}>
@@ -163,6 +170,17 @@ export function MeasurementUnitsPage() {
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        confirmLabel="Eliminar"
+        description={`La unidad ${unitToDelete?.code ?? ''} se eliminara definitivamente. Si esta en uso, el backend rechazara la operacion y mostrara el motivo.`}
+        isConfirming={isDeleting}
+        isOpen={Boolean(unitToDelete)}
+        onCancel={() => setUnitToDelete(null)}
+        onConfirm={() => void handleDelete()}
+        title="Eliminar unidad de medida"
+        tone="danger"
+      />
     </section>
   )
 }

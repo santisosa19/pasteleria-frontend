@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { listMeasurementUnits, type MeasurementUnit } from '../../features/measurement-units/api/measurementUnitsApi'
 import { createRawMaterial, deleteRawMaterial, listRawMaterials, updateRawMaterial, type RawMaterial } from '../../features/raw-materials/api/rawMaterialsApi'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
@@ -17,9 +18,11 @@ export function RawMaterialsPage() {
   const [units, setUnits] = useState<MeasurementUnit[]>([])
   const [form, setForm] = useState(initialForm)
   const [editingMaterial, setEditingMaterial] = useState<RawMaterial | null>(null)
+  const [materialToDelete, setMaterialToDelete] = useState<RawMaterial | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState<ToastState | null>(null)
   const [search, setSearch] = useState('')
@@ -108,14 +111,19 @@ export function RawMaterialsPage() {
     }
   }
 
-  async function handleDelete(material: RawMaterial) {
-    if (!window.confirm(`Desactivar la materia prima ${material.name}?`)) return
+  async function handleDelete() {
+    if (!materialToDelete) return
+    setIsDeleting(true)
+
     try {
-      await deleteRawMaterial(material.id)
+      await deleteRawMaterial(materialToDelete.id)
       await refreshMaterials()
       setToast({ message: 'Materia prima desactivada correctamente.', tone: 'success' })
+      setMaterialToDelete(null)
     } catch (caughtError) {
       setToast({ message: getErrorMessage(caughtError), tone: 'error' })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -133,7 +141,7 @@ export function RawMaterialsPage() {
         <button className="ghost-button" type="button" onClick={() => { setSearch(''); setStatusFilter('all'); setStockFilter('all'); setUnitFilter('all'); setSort('name-asc') }}>Limpiar</button>
       </div>
 
-      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredMaterials.length} de {materials.length} insumos</span></div>{isLoading ? <p>Cargando materias primas...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Unidad</th><th>Stock</th><th>Minimo</th><th>Costo prom.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredMaterials.map((material) => <tr key={material.id}><td>{material.name}</td><td>{material.baseUnit.code}</td><td>{formatNumber(material.currentStock, 4)}</td><td>{formatNumber(material.minimumStock, 4)}</td><td>{formatNumber(material.averageCost, 4)}</td><td>{material.isActive ? 'Activa' : 'Inactiva'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(material)}>Editar</button><button type="button" onClick={() => void handleDelete(material)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
+      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredMaterials.length} de {materials.length} insumos</span></div>{isLoading ? <p>Cargando materias primas...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Unidad</th><th>Stock</th><th>Minimo</th><th>Costo prom.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredMaterials.map((material) => <tr key={material.id}><td>{material.name}</td><td>{material.baseUnit.code}</td><td>{formatNumber(material.currentStock, 4)}</td><td>{formatNumber(material.minimumStock, 4)}</td><td>{formatNumber(material.averageCost, 4)}</td><td>{material.isActive ? 'Activa' : 'Inactiva'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(material)}>Editar</button><button type="button" onClick={() => setMaterialToDelete(material)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
 
       <Modal isOpen={isModalOpen} title={editingMaterial ? 'Editar materia prima' : 'Nueva materia prima'} description="Carga el insumo, unidad base, stock y costos iniciales." onClose={closeModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
@@ -151,6 +159,17 @@ export function RawMaterialsPage() {
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        confirmLabel="Desactivar"
+        description={`La materia prima ${materialToDelete?.name ?? ''} quedara inactiva, pero se conservara para historial de compras, recetas e inventario.`}
+        isConfirming={isDeleting}
+        isOpen={Boolean(materialToDelete)}
+        onCancel={() => setMaterialToDelete(null)}
+        onConfirm={() => void handleDelete()}
+        title="Desactivar materia prima"
+        tone="warning"
+      />
     </section>
   )
 }

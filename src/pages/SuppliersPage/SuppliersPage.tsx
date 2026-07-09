@@ -1,5 +1,6 @@
 import { FormEvent, useState, useEffect } from 'react'
 import { createSupplier, deleteSupplier, listSuppliers, updateSupplier, type Supplier } from '../../features/suppliers/api/suppliersApi'
+import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
@@ -14,9 +15,11 @@ export function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [form, setForm] = useState(initialForm)
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null)
+  const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState<ToastState | null>(null)
   const [search, setSearch] = useState('')
@@ -122,14 +125,19 @@ export function SuppliersPage() {
     }
   }
 
-  async function handleDelete(supplier: Supplier) {
-    if (!window.confirm(`Desactivar el proveedor ${supplier.name}?`)) return
+  async function handleDelete() {
+    if (!supplierToDelete) return
+    setIsDeleting(true)
+
     try {
-      await deleteSupplier(supplier.id)
+      await deleteSupplier(supplierToDelete.id)
       await refreshSuppliers()
       setToast({ message: 'Proveedor desactivado correctamente.', tone: 'success' })
+      setSupplierToDelete(null)
     } catch (caughtError) {
       setToast({ message: getErrorMessage(caughtError), tone: 'error' })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -172,7 +180,7 @@ export function SuppliersPage() {
 
       <div className="page-card table-card">
         <div className="table-header"><h2>Listado</h2><span>{filteredSuppliers.length} de {suppliers.length} proveedores</span></div>
-        {isLoading ? <p>Cargando proveedores...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Email</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredSuppliers.map((supplier) => <tr key={supplier.id}><td>{supplier.name}</td><td>{supplier.email ?? '-'}</td><td>{supplier.phone ?? '-'}</td><td>{supplier.isActive ? 'Activo' : 'Inactivo'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(supplier)}>Editar</button><button type="button" onClick={() => void handleDelete(supplier)}>Desactivar</button></td></tr>)}</tbody></table></div>}
+        {isLoading ? <p>Cargando proveedores...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Email</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredSuppliers.map((supplier) => <tr key={supplier.id}><td>{supplier.name}</td><td>{supplier.email ?? '-'}</td><td>{supplier.phone ?? '-'}</td><td>{supplier.isActive ? 'Activo' : 'Inactivo'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(supplier)}>Editar</button><button type="button" onClick={() => setSupplierToDelete(supplier)}>Desactivar</button></td></tr>)}</tbody></table></div>}
       </div>
 
       <Modal isOpen={isModalOpen} title={editingSupplier ? 'Editar proveedor' : 'Nuevo proveedor'} description="Completá los datos y guardá para volver al listado." onClose={closeModal}>
@@ -190,6 +198,17 @@ export function SuppliersPage() {
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        confirmLabel="Desactivar"
+        description={`El proveedor ${supplierToDelete?.name ?? ''} quedara inactivo, pero sus datos se conservaran para el historial.`}
+        isConfirming={isDeleting}
+        isOpen={Boolean(supplierToDelete)}
+        onCancel={() => setSupplierToDelete(null)}
+        onConfirm={() => void handleDelete()}
+        title="Desactivar proveedor"
+        tone="warning"
+      />
     </section>
   )
 }
