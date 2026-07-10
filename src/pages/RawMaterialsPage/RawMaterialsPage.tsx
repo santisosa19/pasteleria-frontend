@@ -7,7 +7,7 @@ import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
 import { emptyToUndefined, formatNumber } from '../../shared/utils/formatters'
 
-const initialForm = { averageCost: '0', baseUnitId: '', currentStock: '0', description: '', isActive: true, lastPurchaseCost: '', minimumStock: '0', name: '' }
+const initialForm = { baseUnitId: '', description: '', isActive: true, minimumStock: '0', name: '' }
 
 type StatusFilter = 'all' | 'active' | 'inactive'
 type StockFilter = 'all' | 'low' | 'ok'
@@ -76,7 +76,7 @@ export function RawMaterialsPage() {
 
   function openEditModal(material: RawMaterial) {
     setEditingMaterial(material)
-    setForm({ averageCost: String(material.averageCost), baseUnitId: material.baseUnitId, currentStock: String(material.currentStock), description: material.description ?? '', isActive: material.isActive, lastPurchaseCost: material.lastPurchaseCost ? String(material.lastPurchaseCost) : '', minimumStock: String(material.minimumStock), name: material.name })
+    setForm({ baseUnitId: material.baseUnitId, description: material.description ?? '', isActive: material.isActive, minimumStock: String(material.minimumStock), name: material.name })
     setError('')
     setIsModalOpen(true)
   }
@@ -95,7 +95,7 @@ export function RawMaterialsPage() {
     setError('')
 
     try {
-      const payload = { averageCost: Number(form.averageCost), baseUnitId: form.baseUnitId, currentStock: Number(form.currentStock), description: emptyToUndefined(form.description), isActive: form.isActive, lastPurchaseCost: form.lastPurchaseCost ? Number(form.lastPurchaseCost) : undefined, minimumStock: Number(form.minimumStock), name: form.name }
+      const payload = { baseUnitId: form.baseUnitId, description: emptyToUndefined(form.description), isActive: form.isActive, minimumStock: Number(form.minimumStock), name: form.name }
       if (editingMaterial) await updateRawMaterial(editingMaterial.id, payload)
       else await createRawMaterial(payload)
 
@@ -130,7 +130,7 @@ export function RawMaterialsPage() {
   return (
     <section className="resource-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="page-heading resource-heading"><div><span className="eyebrow">Maestros</span><h1>Materias primas</h1><p>Insumos, stock minimo y costos usados por recetas, compras e inventario.</p></div><button className="primary-button resource-create-button" type="button" onClick={openCreateModal}>Nueva materia prima</button></div>
+      <div className="page-heading resource-heading"><div><span className="eyebrow">Maestros</span><h1>Materias primas</h1><p>Insumos base del negocio. El stock y los costos se actualizan con compras, ventas y ajustes de inventario.</p></div><button className="primary-button resource-create-button" type="button" onClick={openCreateModal}>Nueva materia prima</button></div>
 
       <div className="page-card resource-toolbar">
         <label><span>Buscar</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Nombre o unidad" /></label>
@@ -141,20 +141,18 @@ export function RawMaterialsPage() {
         <button className="ghost-button" type="button" onClick={() => { setSearch(''); setStatusFilter('all'); setStockFilter('all'); setUnitFilter('all'); setSort('name-asc') }}>Limpiar</button>
       </div>
 
-      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredMaterials.length} de {materials.length} insumos</span></div>{isLoading ? <p>Cargando materias primas...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Unidad</th><th>Stock</th><th>Minimo</th><th>Costo prom.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredMaterials.map((material) => <tr key={material.id}><td>{material.name}</td><td>{material.baseUnit.code}</td><td>{formatNumber(material.currentStock, 4)}</td><td>{formatNumber(material.minimumStock, 4)}</td><td>{formatNumber(material.averageCost, 4)}</td><td>{material.isActive ? 'Activa' : 'Inactiva'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(material)}>Editar</button><button type="button" onClick={() => setMaterialToDelete(material)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
+      <div className="page-card table-card"><div className="table-header"><h2>Listado</h2><span>{filteredMaterials.length} de {materials.length} insumos</span></div>{isLoading ? <p>Cargando materias primas...</p> : <div className="table-wrap"><table><thead><tr><th>Nombre</th><th>Unidad</th><th>Stock</th><th>Minimo</th><th>Costo prom.</th><th>Ultimo costo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredMaterials.map((material) => <tr key={material.id}><td>{material.name}</td><td>{material.baseUnit.code}</td><td>{formatNumber(material.currentStock, 4)}</td><td>{formatNumber(material.minimumStock, 4)}</td><td>{formatNumber(material.averageCost, 4)}</td><td>{material.lastPurchaseCost == null ? '-' : formatNumber(material.lastPurchaseCost, 4)}</td><td>{material.isActive ? 'Activa' : 'Inactiva'}</td><td className="row-actions"><button type="button" onClick={() => openEditModal(material)}>Editar</button><button type="button" onClick={() => setMaterialToDelete(material)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div>
 
-      <Modal isOpen={isModalOpen} title={editingMaterial ? 'Editar materia prima' : 'Nueva materia prima'} description="Carga el insumo, unidad base, stock y costos iniciales." onClose={closeModal}>
+      <Modal isOpen={isModalOpen} title={editingMaterial ? 'Editar materia prima' : 'Nueva materia prima'} description="Carga solo los datos del insumo. El stock y los costos se calculan desde compras, ventas y ajustes." onClose={closeModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <label><span>Nombre</span><input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required maxLength={160} /></label>
             <label><span>Unidad base</span><select value={form.baseUnitId} onChange={(event) => setForm({ ...form, baseUnitId: event.target.value })} required><option value="">Seleccionar</option>{baseUnits.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.code})</option>)}</select></label>
-            <label><span>Stock actual</span><input min="0" step="0.0001" type="number" value={form.currentStock} onChange={(event) => setForm({ ...form, currentStock: event.target.value })} /></label>
             <label><span>Stock minimo</span><input min="0" step="0.0001" type="number" value={form.minimumStock} onChange={(event) => setForm({ ...form, minimumStock: event.target.value })} /></label>
-            <label><span>Costo promedio</span><input min="0" step="0.0001" type="number" value={form.averageCost} onChange={(event) => setForm({ ...form, averageCost: event.target.value })} /></label>
-            <label><span>Ultimo costo</span><input min="0" step="0.0001" type="number" value={form.lastPurchaseCost} onChange={(event) => setForm({ ...form, lastPurchaseCost: event.target.value })} /></label>
             <label className="wide-field"><span>Descripcion</span><textarea rows={3} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} /></label>
             <label className="checkbox-field"><input type="checkbox" checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} /><span>Activa</span></label>
           </div>
+          <p className="helper-text">Para sumar stock y actualizar costos, usa Compras. Para corregir stock manualmente, usa Inventario/Ajustes.</p>
           {error ? <p className="form-error">{error}</p> : null}
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
