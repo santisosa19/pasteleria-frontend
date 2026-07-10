@@ -25,6 +25,12 @@ export function ConfirmDialog({
   title,
   tone = 'question',
 }: ConfirmDialogProps) {
+  const toneLabels: Record<ConfirmTone, string> = {
+    danger: 'Accion irreversible',
+    question: 'Confirmacion requerida',
+    warning: 'Revisar antes de continuar',
+  }
+
   useEffect(() => {
     if (!isOpen) {
       return
@@ -57,16 +63,26 @@ export function ConfirmDialog({
         role="dialog"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <span className="confirm-icon" aria-hidden="true" />
+        <header className="confirm-header">
+          <span className="confirm-icon" aria-hidden="true" />
+          <div className="confirm-title-group">
+            <span className="confirm-kicker">{toneLabels[tone]}</span>
+            <h2>{title}</h2>
+          </div>
+          <button className="confirm-close-button" disabled={isConfirming} type="button" onClick={onCancel} aria-label="Cerrar">
+            x
+          </button>
+        </header>
+
         <div className="confirm-copy">
-          <h2>{title}</h2>
           <p>{description}</p>
         </div>
+
         <footer className="confirm-actions">
           <button className="ghost-button" disabled={isConfirming} type="button" onClick={onCancel}>
             {cancelLabel}
           </button>
-          <button className="primary-button" disabled={isConfirming} type="button" onClick={onConfirm}>
+          <button className={`confirm-primary-button confirm-primary-button-${tone}`} disabled={isConfirming} type="button" onClick={onConfirm}>
             {isConfirming ? 'Procesando...' : confirmLabel}
           </button>
         </footer>
