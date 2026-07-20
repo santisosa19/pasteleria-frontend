@@ -662,6 +662,14 @@
   font-size: 0.9rem;
   font-weight: 800;
 }
+.table-detail {
+  display: block;
+  margin-top: 0.25rem;
+  color: #8d7a72;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 
 .table-wrap {
   overflow-x: auto;
@@ -713,6 +721,64 @@ th {
   display: grid;
   align-content: center;
 }
+.purchase-items-panel,
+.purchase-item-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.purchase-item-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(110px, 0.4fr) minmax(100px, 0.35fr) minmax(130px, 0.45fr) minmax(110px, 0.4fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 250, 243, 0.7);
+}
+
+.purchase-modal-card {
+  width: min(980px, calc(100vw - 2rem));
+  max-height: min(92vh, 900px);
+}
+
+.purchase-modal-card .modal-form {
+  overflow-x: hidden;
+}
+
+.purchase-item-total {
+  display: grid;
+  gap: 0.35rem;
+  color: #74525a;
+  font-size: 0.85rem;
+  font-weight: 850;
+}
+
+.purchase-item-total strong {
+  color: #9d5367;
+  font-size: 1rem;
+}
+
+.purchase-summary {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: #fbf6ef;
+  color: #74525a;
+  font-weight: 900;
+}
+
+.purchase-summary strong {
+  color: #9d5367;
+  font-size: 1.45rem;
+  letter-spacing: -0.05em;
+}
+
 
 .modal-open {
   overflow: hidden;
@@ -1465,6 +1531,11 @@ th {
   .metric-grid,
   .compact-module-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+
+  .purchase-item-row {
+    grid-template-columns: 1fr;
   }
 
   .resource-toolbar {

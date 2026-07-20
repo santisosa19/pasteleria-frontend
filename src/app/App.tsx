@@ -6,6 +6,7 @@ import { LoginPage } from '../pages/LoginPage/LoginPage'
 import { MeasurementUnitsPage } from '../pages/MeasurementUnitsPage/MeasurementUnitsPage'
 import { ModulePlaceholderPage } from '../pages/ModulePlaceholderPage/ModulePlaceholderPage'
 import { ProductsPage } from '../pages/ProductsPage/ProductsPage'
+import { PurchasesPage } from '../pages/PurchasesPage/PurchasesPage'
 import { RawMaterialsPage } from '../pages/RawMaterialsPage/RawMaterialsPage'
 import { SuppliersPage } from '../pages/SuppliersPage/SuppliersPage'
 import { LoadingScreen } from '../shared/components/LoadingScreen'
@@ -55,7 +56,7 @@ function AppContent() {
             <Route path="inventario" element={<ModulePlaceholderPage title="Inventario" description="Movimientos y ajustes de stock." />} />
           </Route>
           <Route element={<RequirePermission permission="purchases:manage" />}>
-            <Route path="compras" element={<ModulePlaceholderPage title="Compras" description="Ingreso de compras y costos." />} />
+            <Route path="compras" element={<PurchasesPage />} />
           </Route>
           <Route element={<RequirePermission permission="suppliers:manage" />}>
             <Route path="proveedores" element={<SuppliersPage />} />

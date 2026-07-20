@@ -1,13 +1,14 @@
 import { PropsWithChildren, useEffect } from 'react'
 
 type ModalProps = PropsWithChildren<{
+  className?: string
   isOpen: boolean
   title: string
   description?: string
   onClose: () => void
 }>
 
-export function Modal({ children, description, isOpen, onClose, title }: ModalProps) {
+export function Modal({ children, className, description, isOpen, onClose, title }: ModalProps) {
   useEffect(() => {
     if (!isOpen) {
       return
@@ -36,7 +37,7 @@ export function Modal({ children, description, isOpen, onClose, title }: ModalPr
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
         aria-modal="true"
-        className="modal-card"
+        className={`modal-card${className ? ` ${className}` : ''}`}
         role="dialog"
         onMouseDown={(event) => event.stopPropagation()}
       >
