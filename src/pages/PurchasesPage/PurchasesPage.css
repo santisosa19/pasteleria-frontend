@@ -1,0 +1,81 @@
+.purchase-modal-card {
+  width: min(860px, calc(100vw - 1.5rem));
+}
+
+.purchase-modal-card .modal-form {
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.purchase-modal-card .form-grid,
+.purchase-item-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.purchase-items-panel > .table-header {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.purchase-items-panel > .table-header .ghost-button {
+  width: auto;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.purchase-item-row {
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.purchase-item-row label,
+.purchase-item-row input,
+.purchase-item-row select {
+  min-width: 0;
+}
+
+.purchase-item-row label:first-child {
+  grid-column: 1 / -1;
+}
+
+.purchase-item-total {
+  justify-content: center;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.purchase-item-row > .ghost-button {
+  width: auto;
+  justify-self: end;
+  align-self: center;
+}
+
+.purchase-summary {
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+@media (max-width: 700px) {
+  .purchase-modal-card {
+    width: 100%;
+  }
+
+  .purchase-modal-card .form-grid,
+  .purchase-item-row {
+    grid-template-columns: 1fr;
+  }
+
+  .purchase-items-panel > .table-header {
+    align-items: stretch;
+  }
+
+  .purchase-items-panel > .table-header .ghost-button,
+  .purchase-item-row > .ghost-button {
+    width: 100%;
+    margin-left: 0;
+    justify-self: stretch;
+  }
+}

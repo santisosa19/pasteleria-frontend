@@ -7,6 +7,7 @@ import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
 import { emptyToNull, formatNumber } from '../../shared/utils/formatters'
+import './PurchasesPage.css'
 
 type PurchaseFormItem = {
   rawMaterialId: string
