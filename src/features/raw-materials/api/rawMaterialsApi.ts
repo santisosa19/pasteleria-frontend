@@ -16,7 +16,7 @@ export type RawMaterial = {
 
 export type RawMaterialPayload = {
   name: string
-  description?: string
+  description?: string | null
   baseUnitId: string
   currentStock?: number
   minimumStock?: number

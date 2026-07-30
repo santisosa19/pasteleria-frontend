@@ -4,7 +4,7 @@ import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
-import { emptyToUndefined } from '../../shared/utils/formatters'
+import { emptyToNull } from '../../shared/utils/formatters'
 
 const initialForm = { name: '', taxId: '', email: '', phone: '', address: '', notes: '', isActive: true }
 
@@ -101,13 +101,13 @@ export function SuppliersPage() {
 
     try {
       const payload = {
-        address: emptyToUndefined(form.address),
-        email: emptyToUndefined(form.email),
+        address: emptyToNull(form.address),
+        email: emptyToNull(form.email),
         isActive: form.isActive,
         name: form.name,
-        notes: emptyToUndefined(form.notes),
-        phone: emptyToUndefined(form.phone),
-        taxId: emptyToUndefined(form.taxId),
+        notes: emptyToNull(form.notes),
+        phone: emptyToNull(form.phone),
+        taxId: emptyToNull(form.taxId),
       }
 
       if (editingSupplier) await updateSupplier(editingSupplier.id, payload)

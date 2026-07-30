@@ -13,7 +13,7 @@ export function PrivateLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const visibleModules = dashboardModules.filter((module) =>
-    user?.permissions.includes(module.permission),
+    module.permissions.some((permission) => user?.permissions.includes(permission)),
   )
   const userInitials = `${user?.firstName.charAt(0) ?? ''}${user?.lastName.charAt(0) ?? ''}`
 

@@ -1,7 +1,7 @@
 export type DashboardModule = {
   title: string
   description: string
-  permission: string
+  permissions: string[]
   path: string
   icon: string
   accent: 'pink' | 'blue' | 'yellow' | 'lilac'
@@ -11,7 +11,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Ventas',
     description: 'Caja, historial y anulaciones.',
-    permission: 'sales:manage',
+    permissions: ['sales:create', 'sales:read', 'sales:cancel'],
     path: '/ventas',
     icon: '$',
     accent: 'pink',
@@ -19,7 +19,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Pedidos',
     description: 'Produccion, entregas y estados.',
-    permission: 'orders:manage',
+    permissions: ['orders:create', 'orders:read', 'orders:status:update', 'orders:convert-to-sale'],
     path: '/pedidos',
     icon: 'P',
     accent: 'blue',
@@ -27,7 +27,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Clientes',
     description: 'Datos y contacto de clientes.',
-    permission: 'customers:manage',
+    permissions: ['customers:create', 'customers:read', 'customers:update', 'customers:delete'],
     path: '/clientes',
     icon: 'C',
     accent: 'yellow',
@@ -35,7 +35,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Pagos',
     description: 'Cobros y estados de pago.',
-    permission: 'payments:manage',
+    permissions: ['payments:create', 'payments:read', 'payments:status:update'],
     path: '/pagos',
     icon: '%',
     accent: 'lilac',
@@ -43,7 +43,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Unidades',
     description: 'Medidas base y conversiones.',
-    permission: 'measurement-units:manage',
+    permissions: ['measurement-units:create', 'measurement-units:update', 'measurement-units:delete'],
     path: '/unidades',
     icon: 'U',
     accent: 'blue',
@@ -51,7 +51,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Productos',
     description: 'Precios, recetas y publicacion.',
-    permission: 'products:manage',
+    permissions: ['products:create', 'products:update', 'products:delete', 'products:profit:read'],
     path: '/productos',
     icon: 'Pr',
     accent: 'pink',
@@ -59,7 +59,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Recetas',
     description: 'Ingredientes, costos y rendimiento.',
-    permission: 'recipes:manage',
+    permissions: ['recipes:create', 'recipes:update', 'recipes:delete', 'recipes:cost:read'],
     path: '/recetas',
     icon: 'R',
     accent: 'yellow',
@@ -67,7 +67,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Materias primas',
     description: 'Insumos, costos y stock minimo.',
-    permission: 'raw-materials:manage',
+    permissions: ['raw-materials:create', 'raw-materials:update', 'raw-materials:delete'],
     path: '/materias-primas',
     icon: 'M',
     accent: 'blue',
@@ -75,7 +75,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Inventario',
     description: 'Movimientos y ajustes de stock.',
-    permission: 'inventory:manage',
+    permissions: ['inventory:movements:read', 'inventory:low-stock:read', 'inventory:adjustments:create'],
     path: '/inventario',
     icon: 'I',
     accent: 'lilac',
@@ -83,7 +83,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Compras',
     description: 'Ingreso de compras y costos.',
-    permission: 'purchases:manage',
+    permissions: ['purchases:create', 'purchases:read'],
     path: '/compras',
     icon: 'Co',
     accent: 'yellow',
@@ -91,7 +91,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Proveedores',
     description: 'Datos comerciales y contacto.',
-    permission: 'suppliers:manage',
+    permissions: ['suppliers:create', 'suppliers:update', 'suppliers:delete'],
     path: '/proveedores',
     icon: 'S',
     accent: 'blue',
@@ -99,7 +99,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Reportes',
     description: 'Resumenes y rentabilidad.',
-    permission: 'reports:read',
+    permissions: ['reports:sales-summary:read', 'reports:product-margins:read', 'reports:purchases-by-supplier:read', 'reports:raw-material-consumption:read'],
     path: '/reportes',
     icon: 'G',
     accent: 'pink',
@@ -107,7 +107,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Usuarios',
     description: 'Altas, roles y estado de cuentas.',
-    permission: 'users:read',
+    permissions: ['users:create', 'users:read', 'users:update', 'users:disable'],
     path: '/usuarios',
     icon: 'Us',
     accent: 'lilac',

@@ -13,11 +13,11 @@ export type Supplier = {
 
 export type SupplierPayload = {
   name: string
-  taxId?: string
-  email?: string
-  phone?: string
-  address?: string
-  notes?: string
+  taxId?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  notes?: string | null
   isActive?: boolean
 }
 

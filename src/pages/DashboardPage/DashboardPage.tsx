@@ -24,7 +24,7 @@ export function DashboardPage() {
   }
 
   const visibleModules = dashboardModules.filter((module) =>
-    user.permissions.includes(module.permission),
+    module.permissions.some((permission) => user.permissions.includes(permission)),
   )
   const quickAccessModules = visibleModules.slice(0, 6)
   const currentDate = new Intl.DateTimeFormat('es-AR', {
@@ -106,7 +106,7 @@ export function DashboardPage() {
           {quickAccessModules.map((module) => (
             <Link className={`module-card module-card-${module.accent}`} key={module.title} to={module.path}>
               <span className="module-card-icon">{module.icon}</span>
-              <small>{module.permission}</small>
+              <small>{module.permissions[0]}</small>
               <h2>{module.title}</h2>
               <p>{module.description}</p>
             </Link>

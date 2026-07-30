@@ -5,7 +5,7 @@ import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
-import { emptyToUndefined, formatNumber } from '../../shared/utils/formatters'
+import { emptyToNull, formatNumber } from '../../shared/utils/formatters'
 
 const initialForm = { baseUnitId: '', description: '', isActive: true, minimumStock: '0', name: '' }
 
@@ -95,7 +95,7 @@ export function RawMaterialsPage() {
     setError('')
 
     try {
-      const payload = { baseUnitId: form.baseUnitId, description: emptyToUndefined(form.description), isActive: form.isActive, minimumStock: Number(form.minimumStock), name: form.name }
+      const payload = { baseUnitId: form.baseUnitId, description: emptyToNull(form.description), isActive: form.isActive, minimumStock: Number(form.minimumStock), name: form.name }
       if (editingMaterial) await updateRawMaterial(editingMaterial.id, payload)
       else await createRawMaterial(payload)
 

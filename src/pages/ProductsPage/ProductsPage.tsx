@@ -6,7 +6,7 @@ import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
-import { emptyToUndefined, formatNumber } from '../../shared/utils/formatters'
+import { emptyToNull, formatNumber } from '../../shared/utils/formatters'
 
 const initialForm = { description: '', isActive: true, isPublished: false, name: '', recipeId: '', salePrice: '0', sku: '' }
 
@@ -17,7 +17,7 @@ type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc'
 
 export function ProductsPage() {
   const { user } = useAuth()
-  const canReadRecipes = Boolean(user?.permissions.includes('recipes:manage'))
+  const canReadRecipes = Boolean(user?.permissions.includes('recipes:read'))
   const [products, setProducts] = useState<Product[]>([])
   const [recipes, setRecipes] = useState<RecipeSummary[]>([])
   const [form, setForm] = useState(initialForm)
@@ -97,7 +97,7 @@ export function ProductsPage() {
     setError('')
 
     try {
-      const payload = { description: emptyToUndefined(form.description), isActive: form.isActive, isPublished: form.isPublished, name: form.name, recipeId: emptyToUndefined(form.recipeId), salePrice: Number(form.salePrice), sku: emptyToUndefined(form.sku) }
+      const payload = { description: emptyToNull(form.description), isActive: form.isActive, isPublished: form.isPublished, name: form.name, recipeId: emptyToNull(form.recipeId), salePrice: Number(form.salePrice), sku: emptyToNull(form.sku) }
       if (editingProduct) await updateProduct(editingProduct.id, payload)
       else await createProduct(payload)
 

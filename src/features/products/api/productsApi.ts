@@ -15,9 +15,9 @@ export type Product = {
 
 export type ProductPayload = {
   name: string
-  description?: string
-  sku?: string
-  recipeId?: string
+  description?: string | null
+  sku?: string | null
+  recipeId?: string | null
   salePrice: number
   isPublished?: boolean
   isActive?: boolean
