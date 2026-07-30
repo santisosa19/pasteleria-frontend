@@ -825,6 +825,119 @@ th {
   letter-spacing: -0.05em;
 }
 
+.security-toolbar {
+  grid-template-columns: minmax(220px, 1fr) auto;
+}
+
+.security-roles-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.role-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.role-card {
+  display: grid;
+  gap: 0.65rem;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.8rem;
+  background: rgba(255, 250, 243, 0.7);
+}
+
+.role-card-selected {
+  border-color: rgba(201, 101, 139, 0.5);
+  box-shadow: 0 0 0 4px rgba(217, 126, 161, 0.1);
+}
+
+.role-card > button {
+  display: grid;
+  gap: 0.35rem;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.role-card strong {
+  color: #5f3e43;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+.role-card span {
+  color: #8d7a72;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.permission-matrix {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.permission-group {
+  display: grid;
+  gap: 0.65rem;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.9rem;
+  background: rgba(255, 250, 243, 0.64);
+}
+
+.permission-group h3 {
+  margin: 0;
+  color: #9d5367;
+  font-size: 0.92rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.permission-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.55rem;
+}
+
+.permission-check {
+  display: flex !important;
+  gap: 0.65rem !important;
+  align-items: flex-start;
+  border: 1px solid rgba(83, 64, 59, 0.08);
+  border-radius: 0.85rem;
+  padding: 0.7rem;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.permission-check input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+
+.permission-check span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.permission-check strong {
+  color: #5f3e43;
+  font-size: 0.84rem;
+}
+
+.permission-check small {
+  color: #8d7a72;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
 .modal-open {
   overflow: hidden;
 }

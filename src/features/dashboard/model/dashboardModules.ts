@@ -107,7 +107,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Usuarios',
     description: 'Altas, roles y estado de cuentas.',
-    permissions: ['users:create', 'users:read', 'users:update', 'users:disable'],
+    permissions: ['users:create', 'users:read', 'users:update', 'users:disable', 'roles:create', 'roles:read', 'roles:update', 'roles:delete', 'roles:permissions:update', 'permissions:read'],
     path: '/usuarios',
     icon: 'Us',
     accent: 'lilac',

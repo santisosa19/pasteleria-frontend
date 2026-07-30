@@ -11,6 +11,7 @@ import { PurchasesPage } from '../pages/PurchasesPage/PurchasesPage'
 import { RawMaterialsPage } from '../pages/RawMaterialsPage/RawMaterialsPage'
 import { RecipesPage } from '../pages/RecipesPage/RecipesPage'
 import { SuppliersPage } from '../pages/SuppliersPage/SuppliersPage'
+import { UsersPage } from '../pages/UsersPage/UsersPage'
 import { LoadingScreen } from '../shared/components/LoadingScreen'
 import { PrivateLayout } from '../shared/components/PrivateLayout'
 import { RequirePermission } from '../shared/components/RequirePermission'
@@ -66,8 +67,8 @@ function AppContent() {
           <Route element={<RequirePermission mode="any" permissions={['reports:sales-summary:read', 'reports:product-margins:read', 'reports:purchases-by-supplier:read', 'reports:raw-material-consumption:read']} />}>
             <Route path="reportes" element={<ModulePlaceholderPage title="Reportes" description="Resumenes y rentabilidad." />} />
           </Route>
-          <Route element={<RequirePermission mode="any" permissions={['users:create', 'users:read', 'users:update', 'users:disable']} />}>
-            <Route path="usuarios" element={<ModulePlaceholderPage title="Usuarios" description="Altas, roles y estado de cuentas." />} />
+          <Route element={<RequirePermission mode="any" permissions={['users:create', 'users:read', 'users:update', 'users:disable', 'roles:create', 'roles:read', 'roles:update', 'roles:delete', 'roles:permissions:update', 'permissions:read']} />}>
+            <Route path="usuarios" element={<UsersPage />} />
           </Route>
         </Route>
       </Route>
