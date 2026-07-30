@@ -19,7 +19,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Pedidos',
     description: 'Produccion, entregas y estados.',
-    permissions: ['orders:create', 'orders:read', 'orders:status:update', 'orders:convert-to-sale'],
+    permissions: ['orders:read', 'orders:create', 'orders:status:update', 'orders:convert-to-sale'],
     path: '/pedidos',
     icon: 'P',
     accent: 'blue',
@@ -27,7 +27,7 @@ export const dashboardModules: DashboardModule[] = [
   {
     title: 'Clientes',
     description: 'Datos y contacto de clientes.',
-    permissions: ['customers:create', 'customers:read', 'customers:update', 'customers:delete'],
+    permissions: ['customers:read', 'customers:create', 'customers:update', 'customers:delete'],
     path: '/clientes',
     icon: 'C',
     accent: 'yellow',

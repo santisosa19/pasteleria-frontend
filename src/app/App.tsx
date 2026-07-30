@@ -1,11 +1,13 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../features/auth/model/AuthProvider'
 import { useAuth } from '../features/auth/hooks/useAuth'
+import { CustomersPage } from '../pages/CustomersPage/CustomersPage'
 import { DashboardPage } from '../pages/DashboardPage/DashboardPage'
 import { InventoryPage } from '../pages/InventoryPage/InventoryPage'
 import { LoginPage } from '../pages/LoginPage/LoginPage'
 import { MeasurementUnitsPage } from '../pages/MeasurementUnitsPage/MeasurementUnitsPage'
 import { ModulePlaceholderPage } from '../pages/ModulePlaceholderPage/ModulePlaceholderPage'
+import { OrdersPage } from '../pages/OrdersPage/OrdersPage'
 import { ProductsPage } from '../pages/ProductsPage/ProductsPage'
 import { PurchasesPage } from '../pages/PurchasesPage/PurchasesPage'
 import { RawMaterialsPage } from '../pages/RawMaterialsPage/RawMaterialsPage'
@@ -36,10 +38,10 @@ function AppContent() {
             <Route path="ventas" element={<SalesPage />} />
           </Route>
           <Route element={<RequirePermission mode="any" permissions={['orders:create', 'orders:read', 'orders:status:update', 'orders:convert-to-sale']} />}>
-            <Route path="pedidos" element={<ModulePlaceholderPage title="Pedidos" description="Produccion, entregas y estados." />} />
+            <Route path="pedidos" element={<OrdersPage />} />
           </Route>
           <Route element={<RequirePermission mode="any" permissions={['customers:create', 'customers:read', 'customers:update', 'customers:delete']} />}>
-            <Route path="clientes" element={<ModulePlaceholderPage title="Clientes" description="Datos y contacto de clientes." />} />
+            <Route path="clientes" element={<CustomersPage />} />
           </Route>
           <Route element={<RequirePermission mode="any" permissions={['payments:create', 'payments:read', 'payments:status:update']} />}>
             <Route path="pagos" element={<ModulePlaceholderPage title="Pagos" description="Cobros y estados de pago." />} />
