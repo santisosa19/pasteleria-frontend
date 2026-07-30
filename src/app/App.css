@@ -746,6 +746,22 @@ th {
   background: rgba(255, 250, 243, 0.7);
 }
 
+.sale-item-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.sale-item-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(120px, 0.45fr) minmax(130px, 0.45fr) minmax(110px, 0.4fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 250, 243, 0.7);
+}
+
 .purchase-modal-card {
   width: min(980px, calc(100vw - 2rem));
   max-height: min(92vh, 900px);

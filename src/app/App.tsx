@@ -10,6 +10,7 @@ import { ProductsPage } from '../pages/ProductsPage/ProductsPage'
 import { PurchasesPage } from '../pages/PurchasesPage/PurchasesPage'
 import { RawMaterialsPage } from '../pages/RawMaterialsPage/RawMaterialsPage'
 import { RecipesPage } from '../pages/RecipesPage/RecipesPage'
+import { SalesPage } from '../pages/SalesPage/SalesPage'
 import { SuppliersPage } from '../pages/SuppliersPage/SuppliersPage'
 import { UsersPage } from '../pages/UsersPage/UsersPage'
 import { LoadingScreen } from '../shared/components/LoadingScreen'
@@ -32,7 +33,7 @@ function AppContent() {
           <Route index element={<DashboardPage />} />
 
           <Route element={<RequirePermission mode="any" permissions={['sales:create', 'sales:read', 'sales:cancel']} />}>
-            <Route path="ventas" element={<ModulePlaceholderPage title="Ventas" description="Caja, historial y anulaciones." />} />
+            <Route path="ventas" element={<SalesPage />} />
           </Route>
           <Route element={<RequirePermission mode="any" permissions={['orders:create', 'orders:read', 'orders:status:update', 'orders:convert-to-sale']} />}>
             <Route path="pedidos" element={<ModulePlaceholderPage title="Pedidos" description="Produccion, entregas y estados." />} />
