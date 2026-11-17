@@ -232,29 +232,33 @@ export function SalesPage() {
         </div>
       ) : null}
 
-      <Modal className="purchase-modal-card" isOpen={isSaleModalOpen} title="Nueva venta" description="El sistema calcula costos, valida stock y descuenta materias primas al confirmar." onClose={closeCreateModal}>
+      <Modal className="transaction-modal" isOpen={isSaleModalOpen} title="Nueva venta" description="El sistema calcula costos, valida stock y descuenta materias primas al confirmar." onClose={closeCreateModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <label><span>Fecha</span><input type="date" value={form.soldAt} onChange={(event) => setForm({ ...form, soldAt: event.target.value })} /></label>
             <label><span>Descuento</span><input min="0" step="0.01" type="number" value={form.discount} onChange={(event) => setForm({ ...form, discount: event.target.value })} /></label>
           </div>
-          <section className="purchase-items-panel">
+          <section className="transaction-items-panel">
             <div className="table-header"><h2>Items</h2><button className="ghost-button" type="button" onClick={addItem}>Agregar item</button></div>
             <div className="sale-item-list">
               {form.items.map((item, index) => (
-                <div className="sale-item-row" key={index}>
+                <div aria-label={`Item ${index + 1}`} className="sale-item-row" key={index} role="group">
                   <label><span>Producto</span><select value={item.productId} onChange={(event) => handleProductChange(index, event.target.value)} required><option value="">Seleccionar</option>{sellableProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
                   <label><span>Cantidad</span><input min="0.0001" step="0.0001" type="number" value={item.quantity} onChange={(event) => updateItem(index, { quantity: event.target.value })} required /></label>
                   <label><span>Precio unit.</span><input min="0" step="0.01" type="number" value={item.unitPrice} onChange={(event) => updateItem(index, { unitPrice: event.target.value })} required /></label>
                   <div className="purchase-item-total"><span>Subtotal</span><strong>${formatNumber(Number(item.quantity || 0) * Number(item.unitPrice || 0))}</strong></div>
-                  <button className="ghost-button" disabled={form.items.length === 1} type="button" onClick={() => removeItem(index)}>Quitar</button>
+                  <button aria-label={`Quitar item ${index + 1}`} className="ghost-button" disabled={form.items.length === 1} type="button" onClick={() => removeItem(index)}>Quitar</button>
                 </div>
               ))}
             </div>
-            <div className="purchase-summary"><span>Subtotal</span><strong>${formatNumber(formSubtotal)}</strong><span>Descuento</span><strong>${formatNumber(formDiscount)}</strong><span>Total</span><strong>${formatNumber(formTotal)}</strong></div>
+            <dl className="transaction-summary">
+              <div><dt>Subtotal</dt><dd>${formatNumber(formSubtotal)}</dd></div>
+              <div><dt>Descuento</dt><dd>${formatNumber(formDiscount)}</dd></div>
+              <div><dt>Total</dt><dd>${formatNumber(formTotal)}</dd></div>
+            </dl>
           </section>
           <p className="helper-text">Solo aparecen productos activos con receta asignada. Si falta stock, el backend bloquea la venta y devuelve el insumo faltante.</p>
-          {error ? <p className="form-error">{error}</p> : null}
+          {error ? <p className="form-error" role="alert">{error}</p> : null}
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeCreateModal}>Cancelar</button><button className="primary-button" disabled={isSaving || !sellableProducts.length} type="submit">{isSaving ? 'Registrando...' : 'Registrar venta'}</button></footer>
         </form>
       </Modal>
@@ -262,7 +266,7 @@ export function SalesPage() {
       <Modal isOpen={isCancelModalOpen} title="Cancelar venta" description="La venta queda historica como cancelada y se revierte el stock consumido." onClose={closeCancelModal}>
         <form className="resource-form modal-form" onSubmit={handleCancelSubmit}>
           <label><span>Motivo</span><textarea maxLength={255} rows={4} value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} placeholder="Error de carga, devolucion, etc." /></label>
-          {cancelError ? <p className="form-error">{cancelError}</p> : null}
+          {cancelError ? <p className="form-error" role="alert">{cancelError}</p> : null}
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeCancelModal}>Volver</button><button className="primary-button" disabled={isCancelling} type="submit">{isCancelling ? 'Cancelando...' : 'Confirmar cancelacion'}</button></footer>
         </form>
       </Modal>

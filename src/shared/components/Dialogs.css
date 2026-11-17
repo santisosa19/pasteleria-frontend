@@ -1,0 +1,198 @@
+html.dialog-open {
+  overflow: hidden;
+}
+
+.dialog-overlay[open] {
+  --dialog-edge: clamp(0.75rem, 4vw, 2rem);
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: max(var(--dialog-edge), env(safe-area-inset-top))
+    max(var(--dialog-edge), env(safe-area-inset-right))
+    max(var(--dialog-edge), env(safe-area-inset-bottom))
+    max(var(--dialog-edge), env(safe-area-inset-left));
+  overflow: hidden;
+  background: transparent;
+  color: inherit;
+}
+
+.dialog-overlay::backdrop {
+  background: rgba(44, 34, 31, 0.42);
+  backdrop-filter: blur(10px);
+}
+
+.dialog-overlay-confirm::backdrop {
+  background: rgba(44, 34, 31, 0.46);
+  backdrop-filter: blur(12px);
+}
+
+.dialog-overlay .dialog-panel {
+  display: block;
+  box-sizing: border-box;
+  width: min(var(--dialog-width, 720px), 100%);
+  min-width: 0;
+  max-width: 100%;
+  max-height: min(var(--dialog-height, 820px), 100%);
+  overflow: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+}
+
+.dialog-overlay .modal-card {
+  --modal-padding: 1.25rem;
+  border-radius: 1.35rem;
+}
+
+.dialog-overlay .confirm-card {
+  --dialog-width: 500px;
+}
+
+.dialog-overlay .purchase-entry-modal {
+  --dialog-width: 860px;
+  --dialog-height: 900px;
+}
+
+.dialog-overlay .transaction-modal {
+  --dialog-width: 980px;
+  --dialog-height: 900px;
+}
+
+.dialog-overlay .modal-header {
+  padding-inline: var(--modal-padding);
+}
+
+.dialog-overlay .modal-card .modal-form {
+  grid-template-columns: minmax(0, 1fr);
+  padding: var(--modal-padding);
+  overflow: visible;
+}
+
+.dialog-overlay .resource-form :is(label, input, select, textarea) {
+  min-width: 0;
+}
+
+.dialog-overlay .resource-form textarea {
+  max-width: 100%;
+  resize: vertical;
+}
+
+.dialog-overlay .modal-actions {
+  position: static;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 1rem 0 0;
+  background: none;
+  backdrop-filter: none;
+}
+
+.dialog-overlay button:focus-visible {
+  outline: 2px solid #9d5367;
+  outline-offset: 2px;
+}
+
+.transaction-items-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  container-type: inline-size;
+}
+
+.transaction-items-panel > .table-header {
+  flex-wrap: wrap;
+}
+
+.transaction-items-panel > .table-header .ghost-button {
+  width: auto;
+}
+
+.transaction-modal .sale-item-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.transaction-modal .sale-item-row > :first-child {
+  grid-column: 1 / -1;
+}
+
+.transaction-modal .sale-item-row > .ghost-button {
+  width: auto;
+  max-width: 100%;
+  justify-self: end;
+}
+
+.transaction-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.4rem 1rem;
+  margin: 0;
+  border: 1px solid rgba(83, 64, 59, 0.1);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: #fbf6ef;
+  color: #74525a;
+  font-weight: 900;
+}
+
+.transaction-summary > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.65rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.transaction-summary dd {
+  margin: 0;
+  color: #9d5367;
+  font-size: 1.45rem;
+  letter-spacing: -0.05em;
+}
+
+@container (min-width: 42rem) {
+  .transaction-modal .sale-item-row {
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto;
+  }
+
+  .transaction-modal .sale-item-row > :first-child {
+    grid-column: auto;
+  }
+
+  .transaction-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+@container (max-width: 17rem) {
+  .transaction-modal .sale-item-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .dialog-overlay[open] {
+    --dialog-edge: 0.75rem;
+  }
+
+  .dialog-overlay .modal-card {
+    --modal-padding: 1rem;
+  }
+
+  .dialog-overlay :is(.modal-actions, .confirm-actions) {
+    flex-direction: column;
+  }
+
+  .dialog-overlay :is(.modal-actions, .confirm-actions) > button {
+    width: 100%;
+  }
+}

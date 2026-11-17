@@ -247,7 +247,7 @@ export function OrdersPage() {
         </div>
       ) : null}
 
-      <Modal className="purchase-modal-card" isOpen={isModalOpen} title="Nuevo pedido" description="El pedido no descuenta stock hasta convertirse en venta." onClose={closeModal}>
+      <Modal className="transaction-modal" isOpen={isModalOpen} title="Nuevo pedido" description="El pedido no descuenta stock hasta convertirse en venta." onClose={closeModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <label><span>Cliente</span><select value={form.customerId} onChange={(event) => setForm({ ...form, customerId: event.target.value })}><option value="">Sin cliente</option>{customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.firstName} {customer.lastName ?? ''}</option>)}</select></label>
@@ -256,22 +256,26 @@ export function OrdersPage() {
             <label><span>Descuento</span><input min="0" step="0.01" type="number" value={form.discount} onChange={(event) => setForm({ ...form, discount: event.target.value })} /></label>
             <label className="wide-field"><span>Notas</span><textarea rows={2} value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></label>
           </div>
-          <section className="purchase-items-panel">
+          <section className="transaction-items-panel">
             <div className="table-header"><h2>Items</h2><button className="ghost-button" type="button" onClick={addItem}>Agregar item</button></div>
             <div className="sale-item-list">
               {form.items.map((item, index) => (
-                <div className="sale-item-row" key={index}>
+                <div aria-label={`Item ${index + 1}`} className="sale-item-row" key={index} role="group">
                   <label><span>Producto</span><select value={item.productId} onChange={(event) => handleProductChange(index, event.target.value)} required><option value="">Seleccionar</option>{activeProducts.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
                   <label><span>Cantidad</span><input min="0.0001" step="0.0001" type="number" value={item.quantity} onChange={(event) => updateItem(index, { quantity: event.target.value })} required /></label>
                   <label><span>Precio unit.</span><input min="0" step="0.01" type="number" value={item.unitPrice} onChange={(event) => updateItem(index, { unitPrice: event.target.value })} required /></label>
                   <div className="purchase-item-total"><span>Subtotal</span><strong>${formatNumber(Number(item.quantity || 0) * Number(item.unitPrice || 0))}</strong></div>
-                  <button className="ghost-button" disabled={form.items.length === 1} type="button" onClick={() => removeItem(index)}>Quitar</button>
+                  <button aria-label={`Quitar item ${index + 1}`} className="ghost-button" disabled={form.items.length === 1} type="button" onClick={() => removeItem(index)}>Quitar</button>
                 </div>
               ))}
             </div>
-            <div className="purchase-summary"><span>Subtotal</span><strong>${formatNumber(formSubtotal)}</strong><span>Descuento</span><strong>${formatNumber(formDiscount)}</strong><span>Total</span><strong>${formatNumber(formTotal)}</strong></div>
+            <dl className="transaction-summary">
+              <div><dt>Subtotal</dt><dd>${formatNumber(formSubtotal)}</dd></div>
+              <div><dt>Descuento</dt><dd>${formatNumber(formDiscount)}</dd></div>
+              <div><dt>Total</dt><dd>${formatNumber(formTotal)}</dd></div>
+            </dl>
           </section>
-          {error ? <p className="form-error">{error}</p> : null}
+          {error ? <p className="form-error" role="alert">{error}</p> : null}
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving || !activeProducts.length} type="submit">{isSaving ? 'Guardando...' : 'Crear pedido'}</button></footer>
         </form>
       </Modal>
