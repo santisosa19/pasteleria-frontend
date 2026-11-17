@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { createProduct, deleteProduct, listProducts, updateProduct, type Product } from '../../features/products/api/productsApi'
+import { RecipePriceSuggestion } from '../../features/products/components/RecipePriceSuggestion'
 import { listRecipes, type RecipeSummary } from '../../features/recipes/api/recipesApi'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
@@ -157,6 +158,13 @@ export function ProductsPage() {
             <label className="checkbox-field"><input type="checkbox" checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} /><span>Activo</span></label>
           </div>
           {!canReadRecipes ? <p className="helper-text">No tenes permiso para leer recetas, por eso el selector queda deshabilitado.</p> : null}
+          {form.recipeId && user?.permissions.includes('recipes:cost:read') ? (
+            <RecipePriceSuggestion
+              key={form.recipeId}
+              recipeId={form.recipeId}
+              onApply={(salePrice) => setForm((current) => ({ ...current, salePrice }))}
+            />
+          ) : null}
           {error ? <p className="form-error">{error}</p> : null}
           <footer className="modal-actions"><button className="ghost-button" type="button" onClick={closeModal}>Cancelar</button><button className="primary-button" disabled={isSaving} type="submit">{isSaving ? 'Guardando...' : 'Guardar'}</button></footer>
         </form>
