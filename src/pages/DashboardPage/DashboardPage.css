@@ -1,0 +1,126 @@
+.private-content:has(> .operations-home) {
+  box-sizing: border-box;
+}
+
+.operations-home {
+  --operations-ink: #352a28;
+  --operations-muted: #6b5a54;
+  --operations-surface: #fffcf7;
+  --operations-border: #e3d7d0;
+  max-width: 52rem;
+  color: var(--operations-ink);
+}
+
+.operations-home-intro {
+  margin-block-end: 1.25rem;
+  border-block-end: 1px solid var(--operations-border);
+  padding-block: 0.25rem 1rem;
+  overflow-wrap: anywhere;
+}
+
+.operations-home-intro h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 1.35rem + 2vw, 2.65rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.operations-home-intro p,
+.operations-home-empty p {
+  margin: 0.3rem 0 0;
+  color: var(--operations-muted);
+}
+
+.operations-home h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1.1rem;
+}
+
+.operations-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operations-shortcut {
+  --shortcut-tint: #f4e5e6;
+  --shortcut-ink: #8f4557;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(0.55rem, 2vw, 0.85rem);
+  align-items: center;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 4.65rem;
+  border: 1px solid var(--operations-border);
+  border-radius: 0.9rem;
+  padding: 0.7rem clamp(0.65rem, 2vw, 0.95rem);
+  background: var(--operations-surface);
+  color: var(--operations-ink);
+  text-decoration: none;
+}
+
+.operations-shortcut[data-accent='blue'] {
+  --shortcut-tint: #e4edf0;
+  --shortcut-ink: #516c7a;
+}
+
+.operations-shortcut[data-accent='yellow'] {
+  --shortcut-tint: #f4ead5;
+  --shortcut-ink: #79551c;
+}
+
+.operations-shortcut:hover {
+  border-color: var(--shortcut-ink);
+}
+
+.operations-shortcut:focus-visible {
+  outline: 2px solid var(--shortcut-ink);
+  outline-offset: 2px;
+}
+
+.operations-shortcut-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 0.65rem;
+  background: var(--shortcut-tint);
+  color: var(--shortcut-ink);
+}
+
+.operations-shortcut svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.operations-shortcut-copy {
+  display: grid;
+  gap: 0.12rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.operations-shortcut-copy > span {
+  color: var(--operations-muted);
+  font-size: 0.875rem;
+}
+
+.operations-shortcut-arrow {
+  color: var(--shortcut-ink);
+}
+
+.operations-home-empty {
+  border: 1px solid var(--operations-border);
+  border-radius: 0.9rem;
+  padding: 0.95rem;
+  background: var(--operations-surface);
+}
