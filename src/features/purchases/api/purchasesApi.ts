@@ -40,7 +40,7 @@ export type PurchasePayload = {
     rawMaterialId: string
     quantity: number
     unitId: string
-    unitCost: number
+    lineTotal: number
   }>
 }
 

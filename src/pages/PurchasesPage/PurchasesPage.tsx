@@ -143,7 +143,7 @@ export function PurchasesPage() {
         items: form.items.map((item) => ({
           quantity: Number(item.quantity),
           rawMaterialId: item.rawMaterialId,
-          unitCost: Number(item.lineTotal) / Number(item.quantity),
+          lineTotal: Number(item.lineTotal),
           unitId: item.unitId,
         })),
         notes: emptyToNull(form.notes),
@@ -199,7 +199,7 @@ export function PurchasesPage() {
         {isLoading ? <p>Cargando compras...</p> : <div className="table-wrap"><table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Factura</th><th>Items</th><th>Total</th><th>Cargada por</th></tr></thead><tbody>{filteredPurchases.map((purchase) => <tr key={purchase.id}><td>{formatDate(purchase.purchasedAt)}</td><td>{purchase.supplier?.name ?? 'Sin proveedor'}</td><td>{purchase.invoiceNo ?? '-'}</td><td>{purchase.items.length} item{purchase.items.length === 1 ? '' : 's'}<small className="table-detail">{purchase.items.slice(0, 2).map((item) => item.rawMaterial.name).join(', ')}{purchase.items.length > 2 ? '...' : ''}</small></td><td>${formatNumber(purchase.totalAmount)}</td><td>{purchase.createdBy.firstName} {purchase.createdBy.lastName}</td></tr>)}</tbody></table></div>}
       </div>
 
-      <Modal className="purchase-modal-card" isOpen={isModalOpen} title="Nueva compra" description="Carga los items tal como vienen en la factura. El sistema normaliza cantidades a la unidad base del insumo." onClose={closeModal}>
+      <Modal className="purchase-modal-card purchase-entry-modal" isOpen={isModalOpen} title="Nueva compra" description="Carga el total de cada renglon de la factura. El sistema calcula el costo unitario y lo redondea a cuatro decimales." onClose={closeModal}>
         <form className="resource-form modal-form" onSubmit={handleSubmit}>
           <div className="form-grid">
             <label><span>Proveedor</span><select value={form.supplierId} onChange={(event) => setForm({ ...form, supplierId: event.target.value })}><option value="">Sin proveedor</option>{activeSuppliers.map((supplier) => <option key={supplier.id} value={supplier.id}>{supplier.name}</option>)}</select></label>
@@ -226,7 +226,7 @@ export function PurchasesPage() {
                 )
               })}
             </div>
-            <div className="purchase-summary"><span>Total estimado</span><strong>${formatNumber(formTotal)}</strong></div>
+            <div className="purchase-summary"><span>Total de la compra</span><strong>${formatNumber(formTotal)}</strong></div>
           </section>
 
           {error ? <p className="form-error">{error}</p> : null}
