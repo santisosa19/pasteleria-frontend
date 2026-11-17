@@ -79,6 +79,10 @@ export function updateRecipe(id: string, payload: Partial<RecipePayload>) {
   })
 }
 
+export function activateRecipe(id: string) {
+  return apiRequest<Recipe>(`/recipes/${id}/activate`, { method: 'PATCH' })
+}
+
 export function deleteRecipe(id: string) {
   return apiRequest<Recipe>(`/recipes/${id}`, {
     method: 'DELETE',

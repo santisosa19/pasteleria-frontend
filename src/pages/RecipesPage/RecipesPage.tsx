@@ -1,12 +1,13 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { listMeasurementUnits, type MeasurementUnit } from '../../features/measurement-units/api/measurementUnitsApi'
 import { listRawMaterials, type RawMaterial } from '../../features/raw-materials/api/rawMaterialsApi'
-import { createRecipe, deleteRecipe, getRecipeCost, listRecipes, updateRecipe, type Recipe, type RecipeCost } from '../../features/recipes/api/recipesApi'
+import { activateRecipe, createRecipe, deleteRecipe, getRecipeCost, listRecipes, updateRecipe, type Recipe, type RecipeCost } from '../../features/recipes/api/recipesApi'
 import { ConfirmDialog } from '../../shared/components/ConfirmDialog'
 import { Modal } from '../../shared/components/Modal'
 import { Toast, type ToastState } from '../../shared/components/Toast'
 import { getErrorMessage } from '../../shared/utils/errors'
 import { emptyToNull, formatNumber } from '../../shared/utils/formatters'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 
 type IngredientForm = { rawMaterialId: string; quantity: string; unitId: string }
 type StatusFilter = 'all' | 'active' | 'inactive'
@@ -24,19 +25,21 @@ const initialForm = {
 }
 
 export function RecipesPage() {
+  const { user } = useAuth()
+  const canChangeStatus = user?.permissions.includes('recipes:delete')
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [materials, setMaterials] = useState<RawMaterial[]>([])
   const [units, setUnits] = useState<MeasurementUnit[]>([])
   const [form, setForm] = useState(initialForm)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
-  const [recipeToDelete, setRecipeToDelete] = useState<Recipe | null>(null)
+  const [recipeToChangeStatus, setRecipeToChangeStatus] = useState<Recipe | null>(null)
   const [costRecipe, setCostRecipe] = useState<Recipe | null>(null)
   const [recipeCost, setRecipeCost] = useState<RecipeCost | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isCostModalOpen, setIsCostModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isChangingStatus, setIsChangingStatus] = useState(false)
   const [isLoadingCost, setIsLoadingCost] = useState(false)
   const [error, setError] = useState('')
   const [toast, setToast] = useState<ToastState | null>(null)
@@ -193,19 +196,22 @@ export function RecipesPage() {
     }
   }
 
-  async function handleDelete() {
-    if (!recipeToDelete) return
-    setIsDeleting(true)
+  const willActivate = recipeToChangeStatus?.isActive === false
+  const statusAction = willActivate ? 'Activar' : 'Desactivar'
+
+  async function handleStatusChange() {
+    if (!recipeToChangeStatus) return
+    setIsChangingStatus(true)
 
     try {
-      await deleteRecipe(recipeToDelete.id)
-      await refreshRecipes()
-      setToast({ message: 'Receta desactivada correctamente.', tone: 'success' })
-      setRecipeToDelete(null)
+      const recipe = await (willActivate ? activateRecipe : deleteRecipe)(recipeToChangeStatus.id)
+      setRecipes((current) => current.map((item) => item.id === recipe.id ? recipe : item))
+      setToast({ message: recipe.isActive ? 'Receta activada correctamente.' : 'Receta desactivada correctamente.', tone: 'success' })
+      setRecipeToChangeStatus(null)
     } catch (caughtError) {
       setToast({ message: getErrorMessage(caughtError), tone: 'error' })
     } finally {
-      setIsDeleting(false)
+      setIsChangingStatus(false)
     }
   }
 
@@ -251,7 +257,25 @@ export function RecipesPage() {
           <div className="table-wrap">
             <table>
               <thead><tr><th>Nombre</th><th>Rendimiento</th><th>Ingredientes</th><th>Estado</th><th>Acciones</th></tr></thead>
-              <tbody>{filteredRecipes.map((recipe) => <tr key={recipe.id}><td>{recipe.name}</td><td>{formatNumber(recipe.yieldQuantity, 4)} {recipe.yieldUnit.code}</td><td>{recipe.ingredients.length}</td><td>{recipe.isActive ? 'Activa' : 'Inactiva'}</td><td className="row-actions"><button type="button" onClick={() => void openCostModal(recipe)}>Costo</button><button type="button" onClick={() => openEditModal(recipe)}>Editar</button><button type="button" onClick={() => setRecipeToDelete(recipe)}>Desactivar</button></td></tr>)}</tbody>
+              <tbody>
+                {filteredRecipes.map((recipe) => (
+                  <tr key={recipe.id}>
+                    <td>{recipe.name}</td>
+                    <td>{formatNumber(recipe.yieldQuantity, 4)} {recipe.yieldUnit.code}</td>
+                    <td>{recipe.ingredients.length}</td>
+                    <td>{recipe.isActive ? 'Activa' : 'Inactiva'}</td>
+                    <td className="row-actions">
+                      <button type="button" onClick={() => void openCostModal(recipe)}>Costo</button>
+                      <button type="button" onClick={() => openEditModal(recipe)}>Editar</button>
+                      {canChangeStatus ? (
+                        <button type="button" onClick={() => setRecipeToChangeStatus(recipe)}>
+                          {recipe.isActive ? 'Desactivar' : 'Activar'}
+                        </button>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         )}
@@ -304,14 +328,14 @@ export function RecipesPage() {
       </Modal>
 
       <ConfirmDialog
-        confirmLabel="Desactivar"
-        description={`La receta ${recipeToDelete?.name ?? ''} quedara inactiva y no podra usarse para nuevas operaciones.`}
-        isConfirming={isDeleting}
-        isOpen={Boolean(recipeToDelete)}
-        onCancel={() => setRecipeToDelete(null)}
-        onConfirm={() => void handleDelete()}
-        title="Desactivar receta"
-        tone="warning"
+        confirmLabel={statusAction}
+        description={`La receta ${recipeToChangeStatus?.name ?? ''} ${willActivate ? 'volvera a estar activa.' : 'quedara inactiva y no podra usarse para nuevas operaciones.'}`}
+        isConfirming={isChangingStatus}
+        isOpen={Boolean(recipeToChangeStatus)}
+        onCancel={() => setRecipeToChangeStatus(null)}
+        onConfirm={() => void handleStatusChange()}
+        title={`${statusAction} receta`}
+        tone={willActivate ? 'question' : 'warning'}
       />
     </section>
   )
