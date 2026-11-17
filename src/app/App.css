@@ -1153,7 +1153,7 @@ th {
 /* Professional dashboard shell */
 .dashboard-shell {
   min-height: 100vh;
-  overflow: hidden;
+  overflow: clip;
   padding: 0;
   background:
     radial-gradient(circle at 10% 8%, rgba(216, 121, 157, 0.08), transparent 22rem),
@@ -1187,13 +1187,15 @@ th {
   top: 0;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   height: 100vh;
+  height: 100dvh;
   border: 0;
   border-right: 1px solid rgba(83, 64, 59, 0.1);
   border-radius: 0;
   padding: 1rem;
   background: rgba(255, 252, 247, 0.92);
-  box-shadow: 16px 0 40px rgba(63, 50, 46, 0.06);
+  box-shadow: none;
   backdrop-filter: blur(20px);
 }
 
@@ -1261,7 +1263,10 @@ th {
 .sidebar-nav {
   display: grid;
   gap: 0.25rem;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
   padding: 0.35rem 0 1rem;
 }
 
@@ -1317,6 +1322,7 @@ th {
 
 .sidebar-footer {
   display: flex;
+  flex-shrink: 0;
   gap: 0.75rem;
   align-items: center;
   margin-top: auto;
@@ -1697,7 +1703,8 @@ th {
   color: #6f6388;
 }
 
-.mobile-backdrop {
+.mobile-backdrop,
+.mobile-menu-close {
   display: none;
 }
 
@@ -1726,6 +1733,10 @@ th {
 }
 
 @media (max-width: 860px) {
+  html.mobile-navigation-open {
+    overflow: hidden;
+  }
+
   .private-layout,
   .sidebar-is-collapsed .private-layout {
     grid-template-columns: 1fr;
@@ -1739,11 +1750,13 @@ th {
     width: min(82vw, 310px);
     align-items: stretch;
     padding: 1rem;
+    background: #fffcf7;
+    visibility: hidden;
     transform: translateX(-105%);
-    transition: transform 180ms ease;
   }
 
   .mobile-menu-is-open .module-sidebar {
+    visibility: visible;
     transform: translateX(0);
   }
 
@@ -1763,11 +1776,28 @@ th {
     display: none;
   }
 
+  .sidebar-is-collapsed .sidebar-brand,
+  .sidebar-is-collapsed .sidebar-footer {
+    flex-direction: row;
+  }
+
+  .mobile-menu-close {
+    display: grid;
+    place-items: center;
+  }
+
+  .mobile-menu-close svg {
+    width: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+
   .mobile-backdrop {
     position: fixed;
     z-index: 19;
     inset: 0;
-    display: block;
+    display: none;
     background: rgba(44, 34, 31, 0.32);
     opacity: 0;
     pointer-events: none;
@@ -1775,6 +1805,7 @@ th {
   }
 
   .mobile-menu-is-open .mobile-backdrop {
+    display: block;
     opacity: 1;
     pointer-events: auto;
   }
